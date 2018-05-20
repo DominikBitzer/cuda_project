@@ -5,12 +5,21 @@ import csv
 data_path = '../netflix-prize-data/combined_data_1.txt'
 film_names_path = '../netflix-prize-data/movie_titles.csv'
 
-film_correlations_number = 100
-max_read_films = 100
+correlation_matrix_output_path = 'correlationmatrix.csv'
+transformed_data_path = 'user_centric_ratings.csv'
+
+generate_transformed_csv = not True
+film_correlations_number = 10
+max_read_films = 500
 
 def main():
-	ratings_dict = read_file()
-	user_centric_dict = transform_input(ratings_dict)
+	if generate_transformed_csv:
+		ratings_dict = read_original_netflix_file()
+		user_centric_dict = transform_input(ratings_dict)
+		write_transformed_data(user_centric_dict)
+	else:
+		user_centric_dict = read_transformed_data()
+
 	correlation_matrix = calculate_correlations(user_centric_dict)
 
 	output_csv_with_names(correlation_matrix)
@@ -64,7 +73,35 @@ def transform_input(ratings_dict):
 
 	return dict(user_centric_dict)
 
-def read_file():
+
+def write_transformed_data(user_centric_dict):
+	ratings_matrix = [["" for x in range(max_read_films)] for y in range(len(user_centric_dict))]
+
+	for n_th_user_sequential, user_id in enumerate(user_centric_dict):
+		for film_number_iterator in range(0, max_read_films):
+			ratings_matrix[n_th_user_sequential][film_number_iterator] = user_centric_dict[user_id].get(film_number_iterator+1, None)
+
+	with open(transformed_data_path, "wt") as f:
+		writer = csv.writer(f, dialect='excel', delimiter=";")
+		writer.writerows(ratings_matrix)
+
+
+def read_transformed_data():
+	user_centric_dict = collections.defaultdict(dict)
+
+	with open(transformed_data_path, 'rt') as csvfile:
+		transformed_data_read = csv.reader(csvfile, dialect='excel', delimiter=";")
+
+		for user_iterator_num, line_for_user in enumerate(transformed_data_read):
+			for film_iterator_num, film_rating_record in enumerate(line_for_user):
+				if film_iterator_num > film_correlations_number:
+					break
+				if film_rating_record:
+					user_centric_dict[user_iterator_num][film_iterator_num+1] = 1
+
+	return dict(user_centric_dict)
+
+def read_original_netflix_file():
 	ratings_dict = {}
 	rating_pattern = re.compile("^(\d{1,7}),([12345])")
 	new_film_pattern = re.compile("^(\d{1,5}):")
@@ -94,7 +131,7 @@ def output_csv_with_names(correlation_matrix):
 			correlation_matrix[0][int(film_record[0])] = film_record[2]
 			if int(film_record[0]) > len(correlation_matrix) - 2: break
 
-	with open("correlationmatrix.csv", "wt") as f:
+	with open(correlation_matrix_output_path, "wt") as f:
 		writer = csv.writer(f, dialect='excel', delimiter=";")
 		writer.writerows(correlation_matrix)
 
