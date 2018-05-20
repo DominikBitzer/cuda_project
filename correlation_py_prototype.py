@@ -5,8 +5,8 @@ import csv
 data_path = '../netflix-prize-data/combined_data_1.txt'
 film_names_path = '../netflix-prize-data/movie_titles.csv'
 
-film_corrs_num = 200
-max_read_films = 200
+film_correlations_number = 100
+max_read_films = 100
 
 def main():
 	ratings_dict = read_file()
@@ -18,11 +18,11 @@ def main():
 
 def calculate_correlations(user_centric_dict):
 
-	correlation_matrix = [["" for x in range(film_corrs_num)] for y in range(film_corrs_num)]
+	correlation_matrix = [["" for x in range(film_correlations_number)] for y in range(film_correlations_number)]
 
-	for film_1 in range(1, film_corrs_num):
+	for film_1 in range(1, film_correlations_number):
 
-		for film_2 in range(film_1+1, film_corrs_num):
+		for film_2 in range(film_1+1, film_correlations_number):
 
 			sum_x_times_y = 0
 			sum_x = 0
@@ -62,7 +62,7 @@ def transform_input(ratings_dict):
 		for user_id in ratings_dict[current_film_dict_id]:
 			user_centric_dict[int(user_id)][current_film_dict_id] = 1 #int(ratings_dict[current_film_dict_id][user_id])
 
-	return dict(user_centric_dict), len(ratings_dict)
+	return dict(user_centric_dict)
 
 def read_file():
 	ratings_dict = {}
