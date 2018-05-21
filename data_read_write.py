@@ -4,9 +4,9 @@ data_path = '../netflix-prize-data/combined_data_1.txt'
 film_names_path = '../netflix-prize-data/movie_titles.csv'
 
 correlation_matrix_output_path = 'correlationmatrix.csv'
-transformed_data_path = 'user_centric_ratings.csv'
+transformed_data_path = 'user_centric_ratings.npy'
 
-max_read_films = 100
+max_read_films = 500
 
 
 def main():
@@ -26,30 +26,17 @@ def transform_input(ratings_dict):
 
 
 def write_transformed_data(user_centric_dict):
-	ratings_matrix = [["" for x in range(max_read_films)] for y in range(len(user_centric_dict))]
+	ratings_matrix = numpy.zeros([len(user_centric_dict), max_read_films], dtype=int) 
 
 	for n_th_user_sequential, user_id in enumerate(user_centric_dict):
 		for film_number_iterator in range(0, max_read_films):
-			ratings_matrix[n_th_user_sequential][film_number_iterator] = user_centric_dict[user_id].get(film_number_iterator+1, None)
+			ratings_matrix[n_th_user_sequential][film_number_iterator] = user_centric_dict[user_id].get(film_number_iterator+1, 0)
 
-	with open(transformed_data_path, "wt") as f:
-		writer = csv.writer(f, dialect='excel', delimiter=";")
-		writer.writerows(ratings_matrix)
+	numpy.save(transformed_data_path, ratings_matrix)
 
 
 def read_transformed_data(film_correlations_number):
-	with open(transformed_data_path, 'rt') as csvfile:
-		transformed_data_read = csv.reader(csvfile, dialect='excel', delimiter=";")
-
-		user_centric_array = numpy.zeros([sum(1 for row in transformed_data_read), film_correlations_number], dtype=int)
-		csvfile.seek(0)
-
-		for user_iterator_num, line_for_user in enumerate(transformed_data_read):
-			for film_iterator_num, film_rating_record in enumerate(line_for_user):
-				if film_iterator_num >= film_correlations_number:
-					break
-				if film_rating_record:
-					user_centric_array[user_iterator_num][film_iterator_num] = 1
+	user_centric_array = numpy.load(transformed_data_path)
 
 	return user_centric_array
 

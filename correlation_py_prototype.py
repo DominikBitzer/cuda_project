@@ -15,6 +15,8 @@ def main():
 def calculate_correlations(user_centric_array):
 	correlation_matrix = numpy.zeros([film_correlations_number+1, film_correlations_number+1])
 
+	number_users = len(user_centric_array)
+
 	for film_1 in range(0, film_correlations_number):
 
 		for film_2 in range(film_1, film_correlations_number):
@@ -29,8 +31,6 @@ def calculate_correlations(user_centric_array):
 				val_x = user_dict[film_1]
 				val_y = user_dict[film_2]
 
-				n = len(user_centric_array)
-
 				sum_x_times_y += val_x * val_y
 
 				sum_x += val_x
@@ -40,10 +40,10 @@ def calculate_correlations(user_centric_array):
 				sum_y_sq += val_y * val_y
 
 			correlation_matrix[film_1+1][film_2+1] = round(
-				( n * sum_x_times_y - sum_x * sum_y ) /
+				( number_users * sum_x_times_y - sum_x * sum_y ) /
 				( 
-					( ( n * sum_x_sq - sum_x * sum_x ) ** 0.5 ) * 
-					( ( n * sum_y_sq - sum_y * sum_y ) ** 0.5 )
+					( ( number_users * sum_x_sq - sum_x * sum_x ) ** 0.5 ) * 
+					( ( number_users * sum_y_sq - sum_y * sum_y ) ** 0.5 )
 				)
 			, 3)
 
@@ -51,6 +51,6 @@ def calculate_correlations(user_centric_array):
 
 
 if __name__ == "__main__":
-	cProfile.run("main()")
-#	main()
+#	cProfile.run("main()")
+	main()
 
