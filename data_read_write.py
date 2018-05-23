@@ -6,7 +6,7 @@ film_names_path = '../netflix-prize-data/movie_titles.csv'
 correlation_matrix_output_path = 'correlationmatrix.csv'
 transformed_data_path = 'user_centric_ratings.npy'
 
-max_read_films = 500
+max_read_films = 200
 
 
 def main():
@@ -26,7 +26,7 @@ def transform_input(ratings_dict):
 
 
 def write_transformed_data(user_centric_dict):
-	ratings_matrix = numpy.zeros([len(user_centric_dict), max_read_films], dtype=int) 
+	ratings_matrix = numpy.zeros([len(user_centric_dict), max_read_films], dtype='int8') 
 
 	for n_th_user_sequential, user_id in enumerate(user_centric_dict):
 		for film_number_iterator in range(0, max_read_films):

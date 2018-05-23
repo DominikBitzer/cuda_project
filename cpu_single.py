@@ -1,18 +1,7 @@
-import data_read_write, numpy
+import numpy
+import execute_tests
 
-import cProfile
-
-film_correlations_number = 10
-
-def main():
-	user_centric_array = data_read_write.read_transformed_data(film_correlations_number)
-
-	correlation_matrix = calculate_correlations(user_centric_array)
-
-	data_read_write.output_csv_with_names(correlation_matrix)
-
-
-def calculate_correlations(user_centric_array):
+def calculate_correlations(user_centric_array, film_correlations_number):
 	correlation_matrix = numpy.zeros([film_correlations_number+1, film_correlations_number+1])
 
 	number_users = len(user_centric_array)
@@ -51,6 +40,6 @@ def calculate_correlations(user_centric_array):
 
 
 if __name__ == "__main__":
-#	cProfile.run("main()")
-	main()
+	execute_tests.launcher("cpu_single")
+
 
