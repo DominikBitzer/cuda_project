@@ -16,9 +16,9 @@ def calculate_correlations(user_centric_array, film_correlations_number):
 			sum_x_sq = 0
 			sum_y_sq = 0
 
-			for user_dict in user_centric_array:
-				val_x = user_dict[film_1]
-				val_y = user_dict[film_2]
+			for user_line in user_centric_array:
+				val_x = user_line[film_1]
+				val_y = user_line[film_2]
 
 				sum_x_times_y += val_x * val_y
 
@@ -28,13 +28,13 @@ def calculate_correlations(user_centric_array, film_correlations_number):
 				sum_x_sq += val_x * val_x
 				sum_y_sq += val_y * val_y
 
-			correlation_matrix[film_1+1][film_2+1] = round(
-				( number_users * sum_x_times_y - sum_x * sum_y ) /
-				( 
-					( ( number_users * sum_x_sq - sum_x * sum_x ) ** 0.5 ) * 
-					( ( number_users * sum_y_sq - sum_y * sum_y ) ** 0.5 )
+			correlation_matrix[film_1+1][film_2+1] = (
+					( number_users * sum_x_times_y - sum_x * sum_y ) /
+					( 
+						( ( number_users * sum_x_sq - sum_x * sum_x ) ** 0.5 ) * 
+						( ( number_users * sum_y_sq - sum_y * sum_y ) ** 0.5 )
+					)
 				)
-			, 3)
 
 	return correlation_matrix
 

@@ -38,6 +38,8 @@ def write_transformed_data(user_centric_dict):
 def read_transformed_data(film_correlations_number):
 	user_centric_array = numpy.load(transformed_data_path)
 
+	user_centric_array.resize((user_centric_array.shape[0], film_correlations_number))
+
 	return user_centric_array
 
 def read_original_netflix_file():
