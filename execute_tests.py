@@ -8,6 +8,8 @@ def launcher(implementation_version, film_correlations_number = 6):
 
 	if implementation_version == "cpu_single":
 		import cpu_single as correlation_container
+	elif implementation_version == "cpu_compiled":
+		import cpu_compiled as correlation_container
 	elif implementation_version == "cpu_multi":
 		import cpu_multi as correlation_container
 	elif implementation_version == "cuda_1simple":
