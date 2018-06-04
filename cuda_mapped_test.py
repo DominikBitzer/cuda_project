@@ -42,14 +42,23 @@ def calculation_thread(user_centric_array_global_mem, correlation_matrix_global_
 				sum_x_sq += val_x * val_x
 				sum_y_sq += val_y * val_y
 
-#			correlation_matrix_global_mem[film_1+1, film_2+1] = 5
-			correlation_matrix_global_mem[film_1+1, film_2+1] = (
-					( number_users * sum_x_times_y - sum_x * sum_y ) /
-					( 
-						( ( number_users * sum_x_sq - sum_x * sum_x ) ** 0.5 ) * 
-						( ( number_users * sum_y_sq - sum_y * sum_y ) ** 0.5 )
-					)
-				)
+			correlation_matrix_global_mem[film_1+1, film_2+1] = 5
+
+#			correlation_matrix_global_mem[film_1+1, film_2+1] = (
+#					( number_users * sum_x_times_y - sum_x * sum_y ) /
+#					( 
+#						( ( number_users * sum_x_sq - sum_x * sum_x ) ** 0.5 ) * 
+#						( ( number_users * sum_y_sq - sum_y * sum_y ) ** 0.5 )
+#					)
+#				)
+
+#			correlation_matrix_global_mem[film_1+1, film_2+1] = (
+#					( number_users * sum_x_times_y - sum_x * sum_y ) /
+#					( 
+#						( ( number_users * sum_x_sq - sum_x * sum_x ) ** 0.5 ) * 
+#						( ( number_users * sum_y_sq - sum_y * sum_y ) ** 0.5 )
+#					)
+#				)
 
 			return
 
@@ -72,18 +81,21 @@ def calculate_correlations(user_centric_array, film_correlations_number):
 		blockspergrid = math.ceil(correlation_fields_to_fill / threadsperblock)
 
 		user_centric_array_global_mem = cuda.to_device(user_centric_array, stream=stream)
-		correlation_matrix_global_mem = cuda.device_array((film_correlations_number+1, film_correlations_number+1), dtype='float64')
+		correlation_matrix_global_mem = cuda.mapped_array((film_correlations_number+1, film_correlations_number+1), dtype='float64')
+
+		y = numpy.ones((1,1), dtype='float64')
+		yc = cuda.to_device(y, stream=stream)
 
 		# Start calculations
 		calculation_thread[blockspergrid, threadsperblock](user_centric_array_global_mem, correlation_matrix_global_mem, int(number_users), int(film_correlations_number))
 
-		correlation_matrix_results = correlation_matrix_global_mem.copy_to_host()
 
-	print(correlation_matrix_results)
-	return correlation_matrix_results
+
+	print(correlation_matrix_global_mem)
+	return correlation_matrix_global_mem
 
 
 
 if __name__ == "__main__":
-	execute_tests.launcher("cuda_2multithread")
+	execute_tests.launcher("cuda_mapped_test")
 

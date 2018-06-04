@@ -16,6 +16,8 @@ def launcher(implementation_version, film_correlations_number = 6):
 		import cuda_1simple as correlation_container
 	elif implementation_version == "cuda_2multithread":
 		import cuda_2multithread as correlation_container
+	elif implementation_version == "cuda_mapped_test":
+		import cuda_mapped_test as correlation_container
 
 	user_centric_array = data_read_write.read_transformed_data(film_correlations_number)
 
